@@ -18,7 +18,6 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'uniqueId',
         'name',
         'username',
         'password',
@@ -35,6 +34,10 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function exams() {
+        return $this->hasMany(Exam::class, 'id_user');
+    }
 
     
 }

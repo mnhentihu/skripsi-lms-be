@@ -21,4 +21,8 @@ class banksoal extends Model
     ];
 
     protected $table = "banksoal";
+
+    public function exams() {
+        return $this->hasMany(Exam::class, 'id_soal');
+    }
 }

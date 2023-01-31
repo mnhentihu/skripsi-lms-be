@@ -33,7 +33,8 @@ class UserController extends Controller
         //upload image
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $fileImage = $image->storeAs('public/users', $image->hashName());
+            $image->storeAs('public/users', $image->hashName());
+            $fileImage = $image->hashName();
         } else {
             $fileImage = null;
         }
@@ -79,8 +80,8 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'min:8'],
-            'role' => ['required', 'string', 'max:255'],
+            'password' => ['nullable', 'min:8'],
+            'role' => ['nullable', 'string', 'max:255'],
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -136,6 +137,63 @@ class UserController extends Controller
 
     public function showImage(User $user)
     {
-        return Storage::url($user->image);
+        return Storage::url('public/users/' . $user->image);
+    }
+
+    public function updateProfile(Request $request, User $user)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255']
+        ]);
+
+        //check if validation fails
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $user->update([
+            'name' => $request->name,
+            'username' => $request->username,
+        ]);
+
+
+        return new UserResource(true, 'Data Nama Berhasil Di Update!', $user);
+    }
+
+    public function updatePassword(Request $request, User $user)
+    {
+        $validator = Validator::make($request->all(), [
+            'password' => ['nullable', 'min:8'],
+        ]);
+
+        //check if validation fails
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $user->update([
+            'password' => bcrypt($request->password),
+        ]);
+
+
+        return new UserResource(true, 'Data Password Berhasil Di Update!', $user);
+    }
+
+    public function updateImage(Request $request, User $user)
+    {
+        $image = $request->file('image');
+        $imageName = $image->hashName();
+        $image->storeAs('public/users', $imageName);
+
+        if ($user->image) {
+            Storage::delete('public/users/'. $user->image);
+        }
+
+        $user->update([
+            'image'     => $imageName,
+        ]);
+
+        return new UserResource(true, 'Data Image Berhasil Di Update!', $user);
     }
 }
