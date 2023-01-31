@@ -7,9 +7,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ExamResource;
 use App\Models\banksoal;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ExamController extends Controller
@@ -25,33 +22,32 @@ class ExamController extends Controller
 
     public function store(Request $request)
     {
-        // $userHasExam = User::whereHas('exams', function (Builder $query) use ($request) {
-        //     $query -> where('subject', $request -> subject) -> where('level', $request->level);
-        // })->get();
+        $userHasExam = Exam::with('user')->where('id_user', $request->id_user)
+            ->where('exams.level', $request->level)
+            ->join('banksoal', 'exams.id_soal', '=', 'banksoal.id')
+            ->where('banksoal.subject', $request->subject)->get();
 
-        // $userHasExam = User::whereHas('exams', function (Builder $query) use ($request) {
-        //     $query -> where('id_soal', $request -> id_soal);
-        // })->get();
-        $userHasExam = Exam::with(['banksoal', 'user'])->where('id_user', Auth::id())
-                        ->where('id_soal', $request->id_soal)->get();
+        if (count($userHasExam) != 0) {
+            return $userHasExam;
+        } else {
+            $exams = banksoal::where('subject', $request->subject)->where('level', $request->level)
+                ->inRandomOrder()->take(10)->get();
 
-        return $userHasExam;
-        // if (! $userHasExam) {
-        //     $exams = banksoal::where('subject', $request->subject)->where('level', $request->level)->inRandomOrder()->get(10);
-            
-        //     foreach($exams as $exam){
-        //         Exam::create([
-        //             'id_soal' => $exam->id,
-        //             'id_user' => Auth::id(),
-        //             'level' => $exam->level,
-        //             'status_exam' => 'belum'
-        //         ]);
-        //     }
-        // }
+            foreach ($exams as $exam) {
+                Exam::create([
+                    'id_soal' => $exam->id,
+                    'id_user' => $request->id_user,
+                    'level' => $exam->level,
+                    'status_exam' => 'belum'
+                ]);
+            }
 
-        // $exam = Exam::with('banksoal')->where('id_user', Auth::id())->where('subject', $request->subject)
-        //         ->where('level', $request->level)->get();
+            $exams = Exam::with('user')->where('id_user', $request->id_user)
+                ->where('exams.level', $request->level)
+                ->join('banksoal', 'exams.id_soal', '=', 'banksoal.id')
+                ->where('banksoal.subject', $request->subject)->get();
 
-        // return new ExamResource(true, 'Data Exam Berhasil Ditambahkan!', $exam);
+            return $exams;
+        }
     }
 }
