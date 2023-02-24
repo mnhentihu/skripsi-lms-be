@@ -195,6 +195,11 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+
+        Spatie\Permission\PermissionServiceProvider::class,
+        Spatie\QueryBuilder\QueryBuilderServiceProvider::class,
+
+
     ],
 
     /*
@@ -210,6 +215,8 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
+        'QueryBuilder' => Spatie\QueryBuilder\QueryBuilderFacade::class,
     ])->toArray(),
+
 
 ];

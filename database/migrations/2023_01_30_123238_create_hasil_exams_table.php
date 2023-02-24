@@ -15,6 +15,10 @@ return new class extends Migration
     {
         Schema::create('hasil_exams', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('id_user');
+            $table->integer('level');
+            $table->string('subject');
+            $table->integer('score');
             $table->timestamps();
         });
     }

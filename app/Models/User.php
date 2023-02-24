@@ -39,5 +39,8 @@ class User extends Authenticatable
         return $this->hasMany(Exam::class, 'id_user');
     }
 
+    public function hasilExam() {
+        return $this->hasMany(Exam::class, 'id_user');
+    }
     
 }

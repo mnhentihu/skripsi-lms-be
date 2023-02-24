@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ExamResource;
 use App\Models\banksoal;
 use Illuminate\Support\Facades\Validator;
+use Tests\Unit\ExampleTest;
 
 class ExamController extends Controller
 {
@@ -47,7 +48,52 @@ class ExamController extends Controller
                 ->join('banksoal', 'exams.id_soal', '=', 'banksoal.id')
                 ->where('banksoal.subject', $request->subject)->get();
 
-            return $exams;
+            return new ExamResource(true, 'List Data Exam', $exams);
         }
+    }
+
+    public function show($id_user, $level, $subject)
+    {
+
+        $exams = Exam::with('user')->join('banksoal', 'exams.id_soal', '=', 'banksoal.id')
+            ->select('exams.*', 'banksoal.*', 'exams.id as id', 'banksoal.id as id_soal')
+            ->where('id_user', $id_user)
+            ->where('exams.level', $level)
+            ->where('banksoal.subject', $subject)->get();
+
+        return new ExamResource(true, 'List Data Exam', $exams);
+    }
+
+    public function update(Request $request)
+    {
+        $exams = Exam::with('user')->where('id_user', $request->id_user)
+            ->where('exams.level', $request->level)
+            ->join('banksoal', 'exams.id_soal', '=', 'banksoal.id')
+            ->where('banksoal.subject', $request->subject)->get();
+
+
+        foreach ($request->finalResult as $finalResult) {
+            $score = 0;
+            $kesempatan = 0;
+            
+            if ($finalResult['jawaban'] == $exams['corAns']) {
+                $score = 10;
+            } else {
+                $score = 0;
+            }
+
+            if('kesempatan' == 0){
+                $kesempatan = 1;
+            } elseif ('kesempatan' == 1){
+                $kesempatan = 2;
+            } else {
+                $kesempatan = 3;
+            }
+
+            Exam::where('id', $finalResult['id'])
+                ->update(['jawaban' => $finalResult['jawaban'], 'score' => $score, 'kesempatan' => $kesempatan]);
+        }
+
+        return ('Data Jawaban Berhasil Di Update!');
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends Controller
 {
@@ -24,7 +25,7 @@ class UserController extends Controller
 
         $this->validate($request, [
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', Rule::unique(User::class),],
             'password' => ['required', 'min:8'],
             'role' => ['required', 'string', 'max:255'],
             'image'     => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -63,6 +64,15 @@ class UserController extends Controller
     {
         //get Users
         $users = User::all();
+        $users = QueryBuilder::for(User::class)
+            ->allowedFilters([
+                'id',
+                'name',
+                'username',
+                'role',
+            ])
+            ->get();
+
 
         //return collection of Users as a resource
         return new UserResource(true, 'List Data Users', $users);
@@ -137,7 +147,7 @@ class UserController extends Controller
 
     public function showImage(User $user)
     {
-        return Storage::url('public/users/' . $user->image);
+        return $user->image;
     }
 
     public function updateProfile(Request $request, User $user)
@@ -195,5 +205,14 @@ class UserController extends Controller
         ]);
 
         return new UserResource(true, 'Data Image Berhasil Di Update!', $user);
+    }
+
+    public function dataSiswa(User $users)
+    {
+        //get Users
+        $users = User::where('role', 'murid')->get();
+
+        //return collection of Users as a resource
+        return new UserResource(true, 'List Data Users', $users);
     }
 }

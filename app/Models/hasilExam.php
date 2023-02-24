@@ -8,4 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class hasilExam extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'id_user',
+        'level',
+        'subject',
+        'score',
+    ];
+
+    public function user() {
+        return $this->belongsTo(User::class, 'id_user');
+    }
 }

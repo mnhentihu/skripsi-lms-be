@@ -19,8 +19,8 @@ return new class extends Migration
             $table->unsignedBigInteger('id_user');
             $table->integer('level');
             $table->char('jawaban')->nullable();
-            $table->string('status_exam')->nullable();
-            $table->string('status_kelulusan')->nullable();
+            $table->int('score')->nullable();
+            $table->int('kesempatan')->nullable();
             $table->timestamps();
 
             $table->foreign('id_user')->references('id')->on('users')->onDelete('cascade');
