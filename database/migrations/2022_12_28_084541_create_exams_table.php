@@ -15,16 +15,18 @@ return new class extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_soal');
+            $table->string('id_soal');
             $table->unsignedBigInteger('id_user');
             $table->integer('level');
-            $table->char('jawaban')->nullable();
-            $table->int('score')->nullable();
-            $table->int('kesempatan')->nullable();
+            $table->string('subject');
+            $table->string('jawaban')->nullable();
+            $table->integer('score')->nullable();
+            $table->integer('kesempatan')->nullable();
+            $table->string('status_kelulusan')->nullable();
             $table->timestamps();
 
             $table->foreign('id_user')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('id_soal')->references('id')->on('banksoal')->onDelete('cascade');
+            // $table->foreign('id_soal')->references('id_str')->on('banksoal')->onDelete('cascade');
         });
     }
 
@@ -38,3 +40,4 @@ return new class extends Migration
         Schema::dropIfExists('exams');
     }
 };
+?>

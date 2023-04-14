@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_user');
             $table->integer('level');
             $table->string('subject');
-            $table->integer('score');
+            $table->string('status_kelulusan');
             $table->timestamps();
         });
     }

@@ -13,8 +13,10 @@ class Exam extends Model
         'id_soal',
         'id_user',
         'level',
+        'subject',
         'jawaban',
-        'status_exam',
+        'score',
+        'kesempatan',
         'status_kelulusan',
     ];
 
@@ -22,8 +24,8 @@ class Exam extends Model
         return $this->belongsTo(User::class, 'id_user');
     }
 
-    public function banksoal() {
-        return $this->belongsTo(User::class, 'id_soal');
-    }
+    // public function banksoal() {
+    //     return $this->belongsTo(User::class, 'id_soal');
+    // }
 
 }

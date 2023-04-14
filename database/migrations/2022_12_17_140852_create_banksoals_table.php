@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('banksoal', function (Blueprint $table) {
             $table->id();
+            // $table->string('id_str')->autoIncrement();
             $table->string('subject');
             $table->text('soal');
             $table->text('ansA');
