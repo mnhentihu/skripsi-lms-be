@@ -40,6 +40,7 @@ Route::get('/image/{user}', [App\Http\Controllers\Api\Auth\UserController::class
 Route::post('/exam', [ App\Http\Controllers\Api\ExamController::class, 'store']);
 Route::get('/exam/{id_user}/{level}/{subject}', [ App\Http\Controllers\Api\ExamController::class, 'show']);
 Route::put('/exam', [ App\Http\Controllers\Api\ExamController::class, 'update']);
+Route::get('/exam/{id_user}', [ App\Http\Controllers\Api\ExamController::class, 'showScore']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

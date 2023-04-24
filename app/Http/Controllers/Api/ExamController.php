@@ -246,7 +246,6 @@ class ExamController extends Controller
             ->where('subject', $request->subject)
             ->value('status_kelulusan');
 
-
         $kelulusan = '';
 
         foreach ($request->jawaban as $index => $jawaban) {
@@ -297,5 +296,42 @@ class ExamController extends Controller
         //     ]);
         // }
 
+    }
+    public function showScore($id_user)
+    {
+        // $scores = Exam::where('id_user', $id_user)
+        //         ->orderBy('level', 'asc')
+        //         ->get(['subject', 'score'])
+        //         ->groupBy('subject')
+        //         ->map(function ($subject_scores) {
+        //             return $subject_scores->pluck('score')->toArray();
+        //         });
+
+
+        // return new ExamResource(true, 'List Data Score', $scores);
+        $scores = Exam::where('id_user', $id_user)
+            ->orderBy('level', 'asc')
+            ->get(['subject', 'score', 'level']);
+
+        $subject_scores = [];
+
+        foreach ($scores as $score) {
+            $subject_scores[$score->subject][$score->level] = $score['score'];
+        }
+
+        $result = [];
+
+        foreach ($subject_scores as $subject => $scores) {
+            $result[] = [
+                'subject' => $subject,
+                'scores' => $scores,
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'List Data Score',
+            'data' => $result,
+        ]);
     }
 }

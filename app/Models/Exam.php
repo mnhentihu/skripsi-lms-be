@@ -23,6 +23,10 @@ class Exam extends Model
     public function user() {
         return $this->belongsTo(User::class, 'id_user');
     }
+    
+    protected $casts = [
+        'jawaban' => 'array',
+    ];
 
     // public function banksoal() {
     //     return $this->belongsTo(User::class, 'id_soal');
